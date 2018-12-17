@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 
 class TestNetworkModule: NetworkModule() {
     override fun provideImagesRetrofit(retrofit: Retrofit): ImagesRepository {
-        return super.provideImagesRetrofit(retrofit)
-//        return Mockito.mock(ImagesRepository::class.java)
+//        return super.provideImagesRetrofit(retrofit)
+        return Mockito.mock(ImagesRepository::class.java)
     }
 }

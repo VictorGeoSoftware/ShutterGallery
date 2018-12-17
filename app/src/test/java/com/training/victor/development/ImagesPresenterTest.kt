@@ -1,10 +1,8 @@
 package com.training.victor.development
 
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import com.training.victor.development.data.DataManager
+import com.training.victor.development.data.models.ImageViewModel
 import com.training.victor.development.network.ImagesRepository
 import com.training.victor.development.presenter.ImagesPresenter
 import io.reactivex.Observable
@@ -12,6 +10,7 @@ import io.reactivex.schedulers.TestScheduler
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyList
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
@@ -54,19 +53,21 @@ class ImagesPresenterTest: ParentUnitTest() {
     @Test
     fun `should call to image list API and retrieve a image list`() {
         val keyWord = "cars"
+        whenever(imagesRepository.getImagesList(keyWord)).thenReturn(Observable.just(getFakeImageListResponse()))
         imagesPresenter.getImageList(keyWord)
         testScheduler.triggerActions()
 
-        verify(imagesView, times(1)).onImageListReceived(any())
+        verify(imagesView, times(1)).onImageListReceived(anyList<ImageViewModel>())
     }
 
     @Test
     fun `should call to profiles list and retrieve an error`() {
         val keyWord = "cars"
-        whenever(imagesRepository.getImagesList(keyWord)).thenReturn(Observable.error(Throwable()))
+        whenever(imagesRepository.getImagesList(keyWord)).thenReturn(Observable.error(Throwable("Token expired")))
         imagesPresenter.getImageList(keyWord)
         testScheduler.triggerActions()
 
-        verify(imagesView, times(1)).onImageListError()
+        val errorMessage = "Token expired"
+        verify(imagesView, times(1)).onImageListError(errorMessage)
     }
 }

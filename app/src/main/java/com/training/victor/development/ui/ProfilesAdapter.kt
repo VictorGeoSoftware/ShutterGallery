@@ -4,13 +4,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.training.victor.development.R
-import com.training.victor.development.data.models.ProfileItem
+import com.training.victor.development.data.models.ImageViewModel
 import com.training.victor.development.utils.inflate
 
-class ProfilesAdapter(private val profilesList: ArrayList<ProfileItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ProfilesAdapter(private val profilesList: ArrayList<ImageViewModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        // TODO :: re implement design
         return CreatorViewHolder(parent.inflate(R.layout.adapter_profile_item))
     }
 
@@ -25,8 +26,8 @@ class ProfilesAdapter(private val profilesList: ArrayList<ProfileItem>) : Recycl
     }
 
     class CreatorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(profileItem: ProfileItem) = with(itemView) {
-
+        fun bind(profileItem: ImageViewModel) = with(itemView) {
+            // TODO :: set all corresponding data!
         }
     }
 }

@@ -4,7 +4,6 @@ import com.training.victor.development.BuildConfig
 import com.training.victor.development.data.TokenManager
 import com.training.victor.development.network.ImagesRepository
 import com.training.victor.development.network.LoginRepository
-import com.training.victor.development.utils.myTrace
 import dagger.Module
 import dagger.Provides
 import okhttp3.Credentials
@@ -70,12 +69,9 @@ open class NetworkModule {
             .connectTimeout(10, TimeUnit.SECONDS)
         okHttpClient.addInterceptor(interceptor)
         okHttpClient.addInterceptor {
-            val tokenValue = "${tokenManager.sessionToken?.tokenType} ${tokenManager.sessionToken?.tokenValue}"
-            myTrace("tokenValue?? :: $tokenValue")
-
             val request = it.request().newBuilder()
                 .addHeader("Accept", "application/json")
-                .addHeader("Authorization", tokenValue)
+                .addHeader("Authorization", "${tokenManager.sessionToken.tokenType} ${tokenManager.sessionToken.tokenValue}")
                 .build()
 
             return@addInterceptor it.proceed(request)

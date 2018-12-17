@@ -1,11 +1,10 @@
 package com.training.victor.development.presenter
 
-import com.google.gson.JsonObject
 import com.training.victor.development.data.DataManager
+import com.training.victor.development.data.models.ImageViewModel
 import com.training.victor.development.utils.getErrorMessage
 import com.training.victor.development.utils.myTrace
 import io.reactivex.Scheduler
-import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class ImagesPresenter @Inject constructor(private val androidSchedulers: Scheduler,
@@ -14,14 +13,14 @@ class ImagesPresenter @Inject constructor(private val androidSchedulers: Schedul
 
     interface ImagesView {
         fun showProgressBar(show: Boolean)
-        fun onImageListReceived(profilesList: ArrayList<JsonObject>)
-        fun onImageListError()
+        fun onImageListReceived(profilesList: List<ImageViewModel>)
+        fun onImageListError(errorMessage: String)
     }
 
 
     fun getImageList(keyWord: String) {
         view?.showProgressBar(true)
-        compositeDisposable.add(dataManager.getProfilesList(keyWord)
+        compositeDisposable.add(dataManager.getImageList(keyWord)
             .observeOn(androidSchedulers)
             .subscribeOn(subscriberSchedulers)
             .subscribe ({
@@ -29,8 +28,7 @@ class ImagesPresenter @Inject constructor(private val androidSchedulers: Schedul
                 view?.onImageListReceived(it)
             }, {
                 view?.showProgressBar(false)
-                myTrace("getImageList error :: ${it.getErrorMessage()}")
-                view?.onImageListError()
+                view?.onImageListError(it.getErrorMessage())
             }))
 
     }
