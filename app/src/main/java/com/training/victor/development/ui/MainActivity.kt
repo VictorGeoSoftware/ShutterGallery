@@ -3,15 +3,23 @@ package com.training.victor.development.ui
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.EditText
 import com.training.victor.development.MainApplication
 import com.training.victor.development.R
 import com.training.victor.development.data.models.ImageViewModel
-import com.training.victor.development.data.models.ProfileItem
 import com.training.victor.development.presenter.ImagesPresenter
 import com.training.victor.development.utils.getDpFromValue
+import com.training.victor.development.utils.hideKeyboard
 import com.training.victor.development.utils.showRequestErrorMessage
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
@@ -19,6 +27,7 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
     @Inject lateinit var imagesPresenter: ImagesPresenter
     private val mImageList = ArrayList<ImageViewModel>()
     private lateinit var profilesAdapter: ProfilesAdapter
+    private val disposable: CompositeDisposable = CompositeDisposable()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,11 +42,20 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
         lstProfiles.adapter = profilesAdapter
 
         imagesPresenter.view = this
-        imagesPresenter.getImageList("cars")
+        imagesPresenter.getImageList("popular")
+
+        disposable.add(createTextChangeObservable(edtKeyWord)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe {
+                imagesPresenter.getImageList(it)
+                edtKeyWord.hideKeyboard()
+            })
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        disposable.clear()
         (application as MainApplication).releasePresenterComponent()
     }
 
@@ -54,7 +72,6 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
     }
 
     override fun onImageListReceived(imageList: List<ImageViewModel>) {
-        // todo:: refactor all models
         mImageList.clear()
         mImageList.addAll(imageList)
         profilesAdapter.notifyDataSetChanged()
@@ -64,5 +81,27 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
         mImageList.clear()
         profilesAdapter.notifyDataSetChanged()
         showRequestErrorMessage(errorMessage)
+    }
+
+
+
+    // ----------------------------------------------------------------------------------------------------------
+    // --------------------------------------------- METHODS AND ROUTINES ---------------------------------------
+    private fun createTextChangeObservable(editText: EditText): Observable<String> {
+        return Observable.create<String>{ emitter ->
+            val watcher = object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) = Unit
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    s?.toString()?.let { emitter.onNext(it) }
+                }
+            }
+
+            editText.addTextChangedListener(watcher)
+
+            emitter.setCancellable { editText.removeTextChangedListener(watcher) }
+        }.filter { it.length > 2 }.debounce(1, TimeUnit.SECONDS)
     }
 }

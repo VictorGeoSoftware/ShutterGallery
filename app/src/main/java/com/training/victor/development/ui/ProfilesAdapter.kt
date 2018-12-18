@@ -4,6 +4,7 @@ import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.training.victor.development.R
 import com.training.victor.development.data.models.ImageViewModel
 import com.training.victor.development.utils.inflate
@@ -32,6 +33,7 @@ class ProfilesAdapter(private val imageList: ArrayList<ImageViewModel>) : Recycl
             val uri = Uri.parse(image.imageUrl)
             imgImage.setImageURI(uri)
             imgImage.aspectRatio = image.aspectRatio.toFloat()
+            imgImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
             txtDescription.text = image.imageDescription
         }
     }

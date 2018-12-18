@@ -8,8 +8,6 @@ ext {
     consumerKey = '"8ff09-9fd9b-4d59d-840d2-53545-7ac21"'
     consumerSecret = '"b2922-1fa2a-cc917-c9f74-534f9-c621c"'
     redirectUri = '"http://10.0.2.2:8080"'
-//    redirectUri = '"http://localhost:3000/callback"'
-//    redirectUri = '"localhost"'
     scope = '"collections.view"'
 }
 

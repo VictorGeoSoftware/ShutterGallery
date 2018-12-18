@@ -27,6 +27,8 @@ android {
         // Cucumber settings
         testApplicationId 'com.training.victor.development.test'
         testInstrumentationRunner "com.training.victor.development.test.Instrumentation"
+        // AppCompat libraries
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
