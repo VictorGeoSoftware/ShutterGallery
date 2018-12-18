@@ -29,11 +29,9 @@ class ProfilesAdapter(private val imageList: ArrayList<ImageViewModel>) : Recycl
 
     class CreatorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(image: ImageViewModel) = with(itemView) {
-            // TODO :: set all corresponding data!
             val uri = Uri.parse(image.imageUrl)
             imgImage.setImageURI(uri)
             imgImage.aspectRatio = image.aspectRatio.toFloat()
-
             txtDescription.text = image.imageDescription
         }
     }
