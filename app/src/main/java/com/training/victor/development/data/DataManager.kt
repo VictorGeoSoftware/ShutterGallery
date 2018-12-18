@@ -26,7 +26,7 @@ class DataManager(private val imagesRepository: ImagesRepository,
     fun getImageList(keyWord: String): Observable<List<ImageViewModel>> {
         return imagesRepository.getImagesList(keyWord).flatMap {
             Observable.just(it.data?.map { dataItem ->
-                ImageViewModel(dataItem.description, dataItem.aspect, dataItem.assets.largeThumb.url)
+                ImageViewModel(dataItem.description, dataItem.aspect, dataItem.assets.hugeThumb.url)
             })
         }
     }

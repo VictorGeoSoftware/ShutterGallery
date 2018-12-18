@@ -13,7 +13,7 @@ class ImagesPresenter @Inject constructor(private val androidSchedulers: Schedul
 
     interface ImagesView {
         fun showProgressBar(show: Boolean)
-        fun onImageListReceived(profilesList: List<ImageViewModel>)
+        fun onImageListReceived(imageList: List<ImageViewModel>)
         fun onImageListError(errorMessage: String)
     }
 
