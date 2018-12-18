@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Profiles</string>
     <string name="error_message">Some error happen: %1$s</string>
+    <string name="hint_search">Type some text</string>
 </resources>
