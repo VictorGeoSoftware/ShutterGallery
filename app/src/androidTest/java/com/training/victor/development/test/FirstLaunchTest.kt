@@ -2,6 +2,7 @@ package com.training.victor.development.test
 
 import android.content.Intent
 import android.support.test.espresso.Espresso.onView
+import android.support.test.espresso.action.ViewActions
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.intent.Intents
 import android.support.test.espresso.matcher.ViewMatchers.*
@@ -48,13 +49,17 @@ class FirstLaunchTest {
         onView(withId(R.id.progressBar)).check(matches(withEffectiveVisibility(Visibility.GONE)))
     }
 
-    @And("profiles list is requested")
-    fun profiles_list_is_requested() {
-//        onView(withId(R.id.progressBar)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    @And("image list is requested")
+    fun image_list_is_requested() {
+        Thread.sleep(500)
+        onView(withId(R.id.edtKeyWord)).perform(ViewActions.clearText(), ViewActions.typeText("cars"))
+        Thread.sleep(2000)
+        onView(withId(R.id.progressBar)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
     }
 
     @Then("list is fulfilled")
     fun list_is_fulfilled() {
+        Thread.sleep(2000)
         onView(withId(R.id.progressBar)).check(matches(withEffectiveVisibility(Visibility.GONE)))
         onView(withId(R.id.lstImages)).check(withItemCount(greaterThan(0)))
     }

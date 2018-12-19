@@ -24,7 +24,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.training.victor.development.ui.LoginActivity"/>
-        <activity android:name="com.training.victor.development.ui.ProfileDetailActivity"/>
     </application>
 
 </manifest>

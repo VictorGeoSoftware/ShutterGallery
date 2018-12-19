@@ -38,9 +38,9 @@ class PresenterModule {
 
     @Provides
     @ViewScope
-    fun provideProfilesPresenter(@Named(ANDROID_SCHEDULER) androidScheduler:Scheduler,
-                                 @Named(TASK_SCHEDULER) taskScheduler:Scheduler,
-                                 dataManager: DataManager)
+    fun provideImagesPresenter(@Named(ANDROID_SCHEDULER) androidScheduler:Scheduler,
+                               @Named(TASK_SCHEDULER) taskScheduler:Scheduler,
+                               dataManager: DataManager)
             = ImagesPresenter(androidScheduler, taskScheduler, dataManager)
 
     @Provides

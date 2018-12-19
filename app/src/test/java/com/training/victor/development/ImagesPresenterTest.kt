@@ -43,9 +43,9 @@ class ImagesPresenterTest: ParentUnitTest() {
     }
 
     override fun <T> createMockedPresenter(): T {
-        val profilesPresenter = ImagesPresenter(testScheduler, testScheduler, dataManager)
-        profilesPresenter.view = imagesView
-        return profilesPresenter as T
+        val imagesPresenter = ImagesPresenter(testScheduler, testScheduler, dataManager)
+        imagesPresenter.view = imagesView
+        return imagesPresenter as T
     }
 
 
@@ -61,7 +61,7 @@ class ImagesPresenterTest: ParentUnitTest() {
     }
 
     @Test
-    fun `should call to profiles list and retrieve an error`() {
+    fun `should call to images list and retrieve an error`() {
         val keyWord = "cars"
         whenever(imagesRepository.getImagesList(keyWord)).thenReturn(Observable.error(Throwable("Token expired")))
         imagesPresenter.getImageList(keyWord)

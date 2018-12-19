@@ -12,6 +12,6 @@ import javax.inject.Singleton
 class DataManagerModule {
     @Provides
     @Singleton
-    fun provideDataManager(profileRepository: ImagesRepository, loginRepository: LoginRepository, tokenManager: TokenManager): DataManager
-            = DataManager(profileRepository, loginRepository, tokenManager)
+    fun provideDataManager(imageRepository: ImagesRepository, loginRepository: LoginRepository, tokenManager: TokenManager): DataManager
+            = DataManager(imageRepository, loginRepository, tokenManager)
 }
