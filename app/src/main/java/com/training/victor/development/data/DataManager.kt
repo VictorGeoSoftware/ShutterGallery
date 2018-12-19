@@ -23,6 +23,10 @@ class DataManager(private val imagesRepository: ImagesRepository,
     fun getAccessToken(clientId: String, clientSecret: String, grantType: String, code: String): Completable {
         return Completable.fromObservable(loginRepository.getAccessToken(clientId, clientSecret, grantType, code))
 
+        /**
+         * TokenManager for store received token value and work with it along it session validity time
+         * Because I have any monthly plan, I can not perform any OAUTH
+         */
 //        return Completable.fromObservable(loginRepository.getAccessToken(clientId, clientSecret, grantType, code).map {
 //            tokenManager.sessionToken = TokenViewModel(it.tokenType, it.accessToken)
 //        })

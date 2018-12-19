@@ -2,7 +2,7 @@ package com.training.victor.development.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
 
     @Inject lateinit var imagesPresenter: ImagesPresenter
     private val mImageList = ArrayList<ImageViewModel>()
-    private lateinit var profilesAdapter: ProfilesAdapter
+    private lateinit var imagesAdapter: ImagesAdapter
     private val disposable: CompositeDisposable = CompositeDisposable()
 
 
@@ -35,11 +35,11 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
         setContentView(R.layout.activity_main)
         (application as MainApplication).createPresenterComponent().inject(this)
 
-        val myGridLayoutManager = GridLayoutManager(this, 2)
-        lstProfiles.layoutManager = myGridLayoutManager
+        val myLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        lstProfiles.layoutManager = myLayoutManager
         lstProfiles.addItemDecoration(SpaceDecorator(getDpFromValue(10)))
-        profilesAdapter = ProfilesAdapter(mImageList)
-        lstProfiles.adapter = profilesAdapter
+        imagesAdapter = ImagesAdapter(mImageList)
+        lstProfiles.adapter = imagesAdapter
 
         imagesPresenter.view = this
         imagesPresenter.getImageList("popular")
@@ -74,12 +74,12 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
     override fun onImageListReceived(imageList: List<ImageViewModel>) {
         mImageList.clear()
         mImageList.addAll(imageList)
-        profilesAdapter.notifyDataSetChanged()
+        imagesAdapter.notifyDataSetChanged()
     }
 
     override fun onImageListError(errorMessage: String) {
         mImageList.clear()
-        profilesAdapter.notifyDataSetChanged()
+        imagesAdapter.notifyDataSetChanged()
         showRequestErrorMessage(errorMessage)
     }
 
