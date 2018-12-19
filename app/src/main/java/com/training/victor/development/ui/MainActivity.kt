@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.EditText
 import com.training.victor.development.MainApplication
 import com.training.victor.development.R
+import com.training.victor.development.data.Constants.Companion.MAIN_ACTIVITY_IMAGE_LIST
+import com.training.victor.development.data.Constants.Companion.MAIN_ACTIVITY_SEARCH_VALUE
 import com.training.victor.development.data.models.ImageViewModel
 import com.training.victor.development.presenter.ImagesPresenter
 import com.training.victor.development.utils.getDpFromValue
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
     private val mImageList = ArrayList<ImageViewModel>()
     private lateinit var imagesAdapter: ImagesAdapter
     private val disposable: CompositeDisposable = CompositeDisposable()
+    private var currentSearchValue = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,14 +38,13 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
         setContentView(R.layout.activity_main)
         (application as MainApplication).createPresenterComponent().inject(this)
 
-        val myLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        lstProfiles.layoutManager = myLayoutManager
-        lstProfiles.addItemDecoration(SpaceDecorator(getDpFromValue(10)))
-        imagesAdapter = ImagesAdapter(mImageList)
-        lstProfiles.adapter = imagesAdapter
 
-        imagesPresenter.view = this
-        imagesPresenter.getImageList("popular")
+        val myLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        lstImages.layoutManager = myLayoutManager
+        lstImages.addItemDecoration(SpaceDecorator(getDpFromValue(10)))
+        imagesAdapter = ImagesAdapter(mImageList)
+        lstImages.adapter = imagesAdapter
+
 
         disposable.add(createTextChangeObservable(edtKeyWord)
             .observeOn(AndroidSchedulers.mainThread())
@@ -51,6 +53,28 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
                 imagesPresenter.getImageList(it)
                 edtKeyWord.hideKeyboard()
             })
+
+
+        imagesPresenter.view = this
+
+        savedInstanceState?.let {
+            currentSearchValue = it.getString(MAIN_ACTIVITY_SEARCH_VALUE, "")
+            mImageList.addAll(it.getParcelableArrayList(MAIN_ACTIVITY_IMAGE_LIST) ?: ArrayList())
+
+            if (mImageList.isEmpty()) {
+                imagesPresenter.getImageList("")
+            } else {
+                imagesAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.run {
+            putString(MAIN_ACTIVITY_SEARCH_VALUE, currentSearchValue)
+            putParcelableArrayList(MAIN_ACTIVITY_IMAGE_LIST, mImageList)
+        }
     }
 
     override fun onDestroy() {
@@ -72,14 +96,15 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
     }
 
     override fun onImageListReceived(imageList: List<ImageViewModel>) {
+        currentSearchValue = edtKeyWord.text.toString()
         mImageList.clear()
         mImageList.addAll(imageList)
-        imagesAdapter.notifyDataSetChanged()
+        imagesAdapter.updateAdapter()
     }
 
     override fun onImageListError(errorMessage: String) {
         mImageList.clear()
-        imagesAdapter.notifyDataSetChanged()
+        imagesAdapter.updateAdapter()
         showRequestErrorMessage(errorMessage)
     }
 
@@ -102,6 +127,6 @@ class MainActivity : AppCompatActivity(), ImagesPresenter.ImagesView {
             editText.addTextChangedListener(watcher)
 
             emitter.setCancellable { editText.removeTextChangedListener(watcher) }
-        }.filter { it.length > 2 }.debounce(1, TimeUnit.SECONDS)
+        }.filter { it.length > 2 && !it.contentEquals(currentSearchValue) }.debounce(1, TimeUnit.SECONDS)
     }
 }

@@ -56,6 +56,6 @@ class FirstLaunchTest {
     @Then("list is fulfilled")
     fun list_is_fulfilled() {
         onView(withId(R.id.progressBar)).check(matches(withEffectiveVisibility(Visibility.GONE)))
-        onView(withId(R.id.lstProfiles)).check(withItemCount(greaterThan(0)))
+        onView(withId(R.id.lstImages)).check(withItemCount(greaterThan(0)))
     }
 }

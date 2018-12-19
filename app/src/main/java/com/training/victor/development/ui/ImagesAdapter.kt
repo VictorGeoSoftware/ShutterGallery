@@ -19,11 +19,11 @@ class ImagesAdapter(private val imageList: ArrayList<ImageViewModel>) : Recycler
         const val NO_ITEM = "NO_ITEM"
     }
 
+    private val header = ImageViewModel("", 0.0, NO_ITEM, "")
+
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0 && imageList.isNotEmpty()) {
-            TYPE_FIRST_HEADER
-        } else if (imageList[position].category.contentEquals(NO_ITEM)) {
+        return if (imageList[position].category.contentEquals(NO_ITEM)) {
             TYPE_HEADER
         } else {
             TYPE_ITEM
@@ -49,12 +49,21 @@ class ImagesAdapter(private val imageList: ArrayList<ImageViewModel>) : Recycler
         else if (holder is CreatorItemViewHolder) {
             holder.bind(imageList[position])
 
-            if (position + 1 < imageList.size
-                && !imageList[position + 1].category.contentEquals(imageList[position].category)) {
-                imageList.add(position + 1, ImageViewModel("", 0.0, NO_ITEM, ""))
-            }
-
         }
+    }
+
+    fun updateAdapter() {
+        if (imageList.isNotEmpty()) {
+            val categoryGroups = imageList.groupBy { it.category }
+            imageList.clear()
+
+            for (category in categoryGroups) {
+                imageList.add(header)
+                imageList.addAll(category.value)
+            }
+        }
+
+        notifyDataSetChanged()
     }
 
 
